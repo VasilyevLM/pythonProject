@@ -8,13 +8,13 @@ active = None
 
 
 def kick():
-    global active
-    global warrior1
-    global warrior2
-    global damage
+    global active #использовать глобальные переменные - плохая практика (попробуй без них).
+    global warrior1 #использовать глобальные переменные - плохая практика (попробуй без них).
+    global warrior2 #использовать глобальные переменные - плохая практика (попробуй без них).
+    global damage #использовать глобальные переменные - плохая практика (попробуй без них).
     damage = random.randint(1, 20)
     active = random.choice([warrior1, warrior2])
-    if active == warrior1:
+    if active == warrior1: #повторение кода (стр.18-24 и 26-32) можно вынести в функцию.
         name = active[0]
         hp = active[1]
         hp -= damage
@@ -22,7 +22,7 @@ def kick():
         active[1] = hp
         warrior1 = active
         return warrior1
-    elif active == warrior2:
+    elif active == warrior2: #повторение кода (стр.18-24 и 26-32) можно вынести в функцию.
         name = active[0]
         hp = active[1]
         hp -= damage
