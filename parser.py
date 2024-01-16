@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import xlsxwriter
+import re
 
 # class Competitors:
 #     def __init__(self, site, sitemap, name, sitemap_url):
@@ -10,35 +11,64 @@ import xlsxwriter
 #         self.sitemap_url = sitemap_url
 
 
-domain = 'https://pupinsite.ru/'
-sitemap = 'sitemap.xml'
+domain = 'https://forintek.ru/catalog/printer-etiketok-snbc-btp-7400/'
+# sitemap = 'sitemap.xml'
 
-sitemap_url = domain + sitemap
+sitemap_url = domain
 r = requests.get(sitemap_url)
 # print(r.status_code)
 # print(r.text)
 soup = BeautifulSoup(r.text, 'lxml')
 
-a = (soup.find_all('loc'))
+a = soup.find_all('h1')
+# print(a)
 xml_list = []
 
 for i in a:
     xml_list.append(i.text)
+    print(i)
+
+# b = soup.find_all('td', class_='font-weight-bold')
+c = soup.find_all('td')
+
+attrs = {
+
+}
+counter = 1
+
+# for i in b:
+#     attrs[f'parameter{counter}'] = i.text
+#     counter += 1
+#     print(i)
+
+for i in c:
+    attrs[f'value{counter}'] = i.text
+    counter += 1
+    print(i.text)
+
+workbook = xlsxwriter.Workbook('forintek.xlsx')
+worksheet = workbook.add_worksheet()
+worksheet.write(1, 1, 'test')
+
+
+
+
+
 
 # print(xml_list)
-
-for i in xml_list:
-    print(i)
-    try:
-        b = requests.get(i)
-        soup1 = BeautifulSoup(b.text, 'lxml')
-        h1 = soup1.find('h1')
-        print(h1.text)
-        with open('h1.txt', mode='a', encoding='utf-8') as file:
-            file.write(f'{h1.text}\n{i}\n')
-
-    except Exception as err:
-        print(err)
+#
+# for i in xml_list:
+#     print(i)
+#     try:
+#         b = requests.get(i)
+#         soup1 = BeautifulSoup(b.text, 'lxml')
+#         h1 = soup1.find('h3')
+#         print(h1.text)
+#         with open('h1.txt', mode='a', encoding='utf-8') as file:
+#             file.write(f'{h1.text}\n{i}\n')
+#
+#     except Exception as err:
+#         print(err)
 
 
 
