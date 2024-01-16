@@ -31,9 +31,7 @@ for i in a:
 # b = soup.find_all('td', class_='font-weight-bold')
 c = soup.find_all('td')
 
-attrs = {
-
-}
+attrs = []
 counter = 1
 
 # for i in b:
@@ -42,13 +40,18 @@ counter = 1
 #     print(i)
 
 for i in c:
-    attrs[f'value{counter}'] = i.text
-    counter += 1
+    attrs.append(i.text)
     print(i.text)
+
+
+
 
 workbook = xlsxwriter.Workbook('forintek.xlsx')
 worksheet = workbook.add_worksheet()
-worksheet.write(1, 1, 'test')
+for i in range(10):
+    for j in range(5):
+        worksheet.write(i, j, i+j)
+workbook.close()
 
 
 
