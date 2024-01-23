@@ -4,7 +4,7 @@ import xlsxwriter
 import re
 import openpyxl
 
-link = 'https://forintek.ru/catalog/printer-etiketok-snbc-btp-7400/'
+link = 'https://forintek.ru/catalog/printer-etiketok-snbc-btp-6300i-plus/'
 # print(r.status_code)
 # print(r.text)
 
@@ -38,20 +38,20 @@ class Competitors:
 
     def __init__(self):
         self.attrs = []
-
+        self.dict_attrs = {}
     def steal(self):
         r = requests.get(link)
         soup = BeautifulSoup(r.text, 'lxml')
         name = soup.find_all('h1')
         name = name[0].text
 
-
+        print(name)
         b = soup.find_all('th')
 
 
         article = b[1].text
-
-        self.attrs.append('name')
+        print(article)
+        self.attrs.append('article')
         self.attrs.append(article)
         self.attrs.append('name')
         self.attrs.append(name)
@@ -63,10 +63,13 @@ class Competitors:
         for i in c:
             self.attrs.append(i.text)
 
-        self.attrs.append('dsdd')
+        self.attrs.append('link')
         self.attrs.append(link)
 
+        for i in range(0, len(self.attrs), 2):
+            self.dict_attrs[self.attrs[i]] = self.attrs[i + 1]
 
+        print(self.dict_attrs)
 
 
 
