@@ -1,265 +1,99 @@
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 import xlsxwriter
-import re
-import openpyxl
+from urllib.parse import urljoin
 
-link = 'https://forintek.ru/catalog/printer-etiketok-snbc-btp-6300i-plus/'
-# print(r.status_code)
-# print(r.text)
+def clean_html(element):
+    return ''.join(element.stripped_strings)
 
+def steal_and_write_to_excel(links):
+    all_data = []
+    columns = {}
 
-class Competitors:
-    # def __init__(self, counter, article, name, print_method, resolution, print_width, print_speed, memory, interface, old_shtrikh, new_shtrikh, paper_type, paper_roll_width, paper_thicknes, roll_outer_diameter, sleeve_diameter, input_signal, tape_length, tape_sleeve_diameter, operating_mode, storage_condition, size, weight, link):
-        # self.article = article
-        # self.name = name
-        # self.print_method = print_method
-        # self.resolution = resolution
-        # self.print_width = print_width
-        # self.print_speed = print_speed
-        # self.memory = memory
-        # self.interface = interface
-        # self.old_shtrikh = old_shtrikh
-        # self.new_shtrikh = new_shtrikh
-        # self.paper_type = paper_type
-        # self.paper_roll_width = paper_roll_width
-        # self.paper_thicknes = paper_thicknes
-        # self.roll_outer_diameter = roll_outer_diameter
-        # self.sleeve_diameter = sleeve_diameter
-        # self.input_signal = input_signal
-        # self.tape_length = tape_length
-        # self.tape_sleeve_diameter = tape_sleeve_diameter
-        # self.operating_mode = operating_mode
-        # self.storage_condition = storage_condition
-        # self.size = size
-        # self.weight = weight
-        # self.link = link
-        # self.counter = counter
+    for link in links:
+        dict_attrs = {}
 
-    def __init__(self):
-        self.attrs = []
-        self.dict_attrs = {}
-    def steal(self):
         r = requests.get(link)
-        soup = BeautifulSoup(r.text, 'lxml')
-        name = soup.find_all('h1')
-        name = name[0].text
-
-        print(name)
-        b = soup.find_all('th')
-
-
-        article = b[1].text
-        print(article)
-        self.attrs.append('article')
-        self.attrs.append(article)
-        self.attrs.append('name')
-        self.attrs.append(name)
-
-
-        c = soup.find_all('td')
-
-
-        for i in c:
-            self.attrs.append(i.text)
-
-        self.attrs.append('link')
-        self.attrs.append(link)
-
-        for i in range(0, len(self.attrs), 2):
-            self.dict_attrs[self.attrs[i]] = self.attrs[i + 1]
-
-        print(self.dict_attrs)
-
-
-
-
-
-
-
-
-    def excel(self):
-        workbook = xlsxwriter.Workbook('forintek.xlsx')
-        worksheet = workbook.add_worksheet()
-        worksheet.write(0, 0, 'Артикул')
-        worksheet.write(0, 1, 'Наименование')
-        worksheet.write(0, 2, 'Метод печати')
-        worksheet.write(0, 3, 'Разрешение')
-        worksheet.write(0, 4, 'Ширина печати')
-        worksheet.write(0, 5, 'Скорость печати')
-        worksheet.write(0, 6, 'Память')
-        worksheet.write(0, 7, 'Интерфейс')
-        worksheet.write(0, 8, '1D штрихкодов')
-        worksheet.write(0, 9, '2D штрихкодов')
-        worksheet.write(0, 10, 'Тип бумаги')
-        worksheet.write(0, 11, 'Ширина рулона бумаги')
-        worksheet.write(0, 12, 'Толщина бумаги')
-        worksheet.write(0, 13, 'Внешний диаметр рулона')
-        worksheet.write(0, 14, 'Диаметр втулки')
-        worksheet.write(0, 15, 'Входной сигнал')
-        worksheet.write(0, 16, 'Длина ленты')
-        worksheet.write(0, 17, 'Диаметр втулки ленты')
-        worksheet.write(0, 18, 'Эксплуатационный режим')
-        worksheet.write(0, 19, 'Условия хранения')
-        worksheet.write(0, 20, 'Размеры')
-        worksheet.write(0, 21, 'Вес')
-        worksheet.write(0, 22, 'Ссылка')
-        worksheet.set_default_row(22)
-
-        bold = workbook.add_format({'bold': True})
-        worksheet.set_row(0, 22, bold)
-        worksheet.set_column('A:T', 22)
-        worksheet.freeze_panes(1, 0)
-
-        workbook.close()
-
-    def safe_date(self):
-        wb = openpyxl.load_workbook('forintek.xlsx')
-        sheet = wb.active
-
-
-        x = 1
-        for index_i, i in enumerate(self.attrs):
-
-            if index_i % 2 != 0:
-                sheet.cell(row=2, column=x).value = i
-                x += 1
-        wb.save('forintek.xlsx')
-
-
-
-
-
-x = Competitors()
-x.steal()
-x.excel()
-x.safe_date()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# url = 'https://meridiant.ru/'
-#
-# sitemap = 'sitemap.xml'
-# sitemap_list = list()
-#
-# sitemap_url = requests.get(url + sitemap)
-# print(sitemap_url)
-# sitemap_list.append(sitemap_url)
-# print(sitemap_list)
-#
-# page_html = BeautifulSoup(sitemap.content, 'lxml')
-# print(page_html)
-
-
-# competitors = {
-# 'Меридиан':	'https://meridiant.ru/',
-# 'Векас': 'https://vekas-automation.ru/',
-# 'Тензор': 'https://alfacont.ru/',
-# 'Вайландт': 'https://weilandt-elektronik.ru/',
-# 'Антарес':	'https://antaresvision.su/',
-# 'Трекмарк':	'https://trekmark.ru/',
-# 'Оператор ЦРПТ':	'https://crpt.ru/',
-# 'Инавтоматика':	'https://inautomatic.ru/',
-# 'Альфа технологии': 'http://xn----7sbanjtasdtlb1czat0i.xn--p1ai/',
-# 'Контур': 'https://kontur.ru/',
-# 'Первый бит': 'https://www.1cbit.ru/',
-# 'Эксель': 'https://diar-mark.ru/',
-# 'РЭЙ': 'https://chmark.ru/',
-# 'ИнСофтРитейл':	'https://insoftretail.ru/',
-# 'Мотрум': 'https://www.motrum.ru/',
-# 'ОКТО':	'https://okto.ru/',
-# 'Ютрейс':	'https://utrace.ru/',
-# 'Промышленная маркировка':	'https://www.markprom.ru/',
-# # ООО "РБС-Групп"	https://rbsgr.ru/
-# # ООО "ИТ-Кластер"	https://it-klaster.com/
-# # ООО "Техно Групп"	https://tehnogrupp.com/
-# # ООО "ИД Раша"	https://id-russia.ru/
-# # ООО "Компания "Тензор" 	https://tensor.ru/
-# # АО "Центроинформ"	https://center-inform.ru/
-# # ООО "Алкософттрейд"	https://www.alco-dec.ru/
-# # Евроконвейер	https://euroconveyor-st.ru/
-# # Окзо Ост	https://okzo-ost.ru/
-# # КранДеталь	https://kran-dt.ru/
-# # ГК "ПОРТ"	https://www.conveyery.ru/
-# # Ярославский конвейер	https://gkmash.ru/
-# # ООО «ТРАЯНА»	https://zavod-conveyer.ru/
-# # OOO "СТиЛ" 	https://konveyery.ru/
-# # Satom.ru, ИП Томащик Галина Васильевна	https://moskva.satom.ru/
-# # IPC2U	https://ipc2u.ru/
-# # ООО «Встраиваемые Системы»	https://empc.ru/
-# # Ниеншанц-Автоматика	https://nnz-ipc.ru/
-# # ГК "Пром-ПК"	https://prom-pc.ru/
-# #  IPC2U	https://aveon.ru/
-# # Hualian Machinery Co., Ltd 	https://hmru.ru/
-# # Скейл Энтерпрайз, ООО	https://xn--b1afbatd0c9b3b.xn--p1ai/
-# # КДМ Трейдинг	https://kdm-trading.ru/
-# # Фаспак	https://faspack.ru/
-# # Модуль Веса	https://modul-ves.ru/
-# # Аспром	https://aspromservis.ru/
-# # ООО "Витэк-Автоматика"	https://www.vitec.ru/
-# # Оптимус драйв	https://optimusdrive.ru/
-# # IPC2U	https://aveon.ru/
-# # ООО Видящие машины \Vision Machines 	https://visionmachines.ru/
-# # Промфорт	https://promfort.com/
-# # Сенсотек	https://sensotek.ru/
-# # Hikrobot	https://hikrobot.mallenom.ru/
-# # «ЧИП и ДИП» 	https://www.chipdip.ru/
-# # РусАвтоматизация	https://rusautomation.ru/
-# # Сенсорен Электро, ООО	https://sensoren.ru/
-# #  ООО «Эффективное производство» 	https://cnc360.ru/
-# # Элрус	https://elrus.ru/
-# # Маркджет	https://markjet.ru/
-# # ООО "РБС-Групп" (21 в списке)	https://rbs-id.ru/
-# # ООО «Упаковочные Системы»	https://packsyst.ru/
-# # Профпринт	https://www.profiprint.ru/
-# # ООО Арни-Групп	https://print-apply.ru/
-# # ИноксДрайв	https://inox-drive.ru/
-# # Европактрейд	https://www.pack-euro.ru/
-# # Новые Решения	https://oborud-m.ru/
-# # Вега Проект 	https://vegatm.ru/
-# # Стэн Холдинг	https://stan-upakovka.ru/
-# # ПостПромТех	https://postpromteh.ru/
-# # Центр КТ	https://shtrih-center.ru/
-# # БристольГрупп	https://upakovka-markirovka.ru/
-# # Современные технологии	https://www.labelprinter.ru/
-# # ООО «Лейблпак»	https://labelpack.ru/
-# # Интер Ай Ди	https://interid.ru/
-# # Элайтс	smartcode.ru/
-# # СТАНДАРТПАК	https://standartpak.ru/
-# }
-
-
-
-
-
-
-
-
-
-
+        soup = BeautifulSoup(r.content, 'lxml')
+
+        # Извлечение названия продукта
+        name_tag = soup.find('h1')
+        if name_tag:
+            dict_attrs['Наименование'] = name_tag.text.strip()
+
+        # Извлечение данных таблицы
+        table_rows = soup.find_all('tr')
+        for row in table_rows:
+            cells = row.find_all(['th', 'td'])
+            if len(cells) == 2:
+                key, value = cells
+                key_text = key.text.strip()
+                if key_text not in columns:
+                    columns[key_text] = len(columns) + 1
+                dict_attrs[key_text] = clean_html(value)
+
+        # Извлечение и обработка изображений
+        images = soup.find_all('img')
+        if images and len(images) >= 4:
+            preview_img_url = images[3].get('src')
+            if preview_img_url:
+                dict_attrs['Превью'] = urljoin(link, preview_img_url)
+
+        images_urls = [urljoin(link, img.get('src')) for img in images if img.get('src')]
+        dict_attrs['Картинки'] = ', '.join(images_urls)
+
+        # Извлечение и обработка описания
+        description_parts = []
+        h3_tags = soup.find_all('h3')
+        p_tags = soup.find_all('p', class_="text-justify text-justify-not-xs")
+        for h3, p in zip(h3_tags, p_tags):
+            combined_text = f"{h3.text.strip()}: {clean_html(p)}"
+            description_parts.append(combined_text)
+        if description_parts:
+            dict_attrs['Описание'] = ' | '.join(description_parts)
+
+        all_data.append(dict_attrs)
+
+    # Запись данных в Excel
+    workbook = xlsxwriter.Workbook('forintek.xlsx')
+    worksheet = workbook.add_worksheet()
+
+    # Определение и запись заголовков столбцов
+    for col_num, header in enumerate(['Наименование', 'Превью', 'Картинки', 'Описание', 'link'] + list(columns.keys())):
+        worksheet.write(0, col_num, header)
+
+    # Запись данных
+    for row_num, data in enumerate(all_data, start=1):
+        for col_num, key in enumerate(['Наименование', 'Превью', 'Картинки', 'Описание', 'link'] + list(columns.keys())):
+            value = data.get(key, '')
+            worksheet.write(row_num, col_num, value)
+
+    workbook.close()
+
+
+
+
+
+# Пример использования
+links = ['https://forintek.ru/catalog/printer-etiketok-snbc-btp-6300i-plus/',
+         'https://forintek.ru/catalog/printer-etiketok-snbc-btp-7400/',
+         'https://forintek.ru/catalog/printer-etiketok-snbc-btp-4300e/',
+         'https://forintek.ru/catalog/printer-etiketok-novexx-xtp-804/',
+         'https://forintek.ru/catalog/printer-etiketok-averydennison-adtp2-ecocut/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-savema-svm-32/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-savema-svm-53/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-savema-svm-107/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-savema-svm-128/',
+         'https://forintek.ru/catalog/printer-etiketok-novexx-xlp-51x/',
+         'https://forintek.ru/catalog/printer-etiketok-novexx-xlp-60x/',
+         'https://forintek.ru/catalog/printer-etiketok-novexx-64-0x/',
+         'https://forintek.ru/catalog/printer-etiketok-novexx-xtp-804/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-coditherm-i-roller/',
+         'https://forintek.ru/catalog/termotransfernyy-printer-coditherm-h-pad/',
+         'https://forintek.ru/catalog/tekstilnyy-printer-averydennison-snap-500/',
+         'https://forintek.ru/catalog/tekstilnyy-printer-averydennison-snap-700/',
+         'https://forintek.ru/catalog/printer-etiketok-averydennison-adtp2-ecocut/']
+
+
+
+steal_and_write_to_excel(links)
