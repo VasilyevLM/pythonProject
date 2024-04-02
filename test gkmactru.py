@@ -1,4 +1,4 @@
-
+import time
 from time import sleep
 
 from selenium import webdriver
@@ -12,17 +12,23 @@ browser.get('https://gk-mact.ru')
 
 title = browser.title
 print(title)
+# coockie = browser.find_element(By.XPATH, '/html/body/div[8]/div/div/div[3]/span[1]').click()
+submit = browser.find_element(By.XPATH, '/html/body/div[4]/div[6]/div[2]/div/div/div[2]/div[3]/div[2]/div/div/form/div[3]/div/button')
+browser.execute_script('arguments[0].scrollIntoView();', submit)
+# browser.execute_script("window.scrollTo(5, 2500)")
+time.sleep(5)
 
-browser.implicitly_wait(0.5)
-
-text_box = browser.find_element(By.CLASS_NAME, 'inputtext')
-text_box2 = browser.find_element(By.CLASS_NAME, 'phone')
+text_box = browser.find_element(By.XPATH, '/html/body/div[4]/div[6]/div[2]/div/div/div[2]/div[3]/div[2]/div/div/form/div[2]/div[1]/div[1]/input')
+text_box2 = browser.find_element(By.XPATH, '/html/body/div[4]/div[6]/div[2]/div/div/div[2]/div[3]/div[2]/div/div/form/div[2]/div[1]/div[2]/input')
 
 text_box.send_keys('Test')
 text_box2.send_keys('9201337011')
-submit = browser.find_element(By.CLASS_NAME, 'btn btn-default has-ripple')
+time.sleep(3)
+
 submit.click()
 
+time.sleep(3)
+browser.close()
 browser.quit()
 
 
